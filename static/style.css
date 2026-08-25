@@ -1,0 +1,302 @@
+/* ============================================
+   Tokens
+   ============================================ */
+:root {
+  --ink: #232420;
+  --ink-soft: #5B5F56;
+  --paper: #FAF8F3;
+  --garden: #1F3329;
+  --garden-soft: #E9EEE7;
+  --brass: #A97D3F;
+  --brass-soft: #F1E6D3;
+  --line: #DAD4C4;
+  --white: #FFFFFF;
+
+  --font-display: "Fraunces", serif;
+  --font-body: "Public Sans", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+}
+
+/* ============================================
+   Layout
+   ============================================ */
+.page {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 72px 24px 100px;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin: 0 0 18px;
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(36px, 6vw, 56px);
+  line-height: 1.08;
+  margin: 0 0 16px;
+  color: var(--garden);
+}
+
+.hero-sub {
+  font-size: 16px;
+  color: var(--ink-soft);
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 32px;
+  align-items: start;
+}
+
+@media (max-width: 800px) {
+  .layout { grid-template-columns: 1fr; }
+}
+
+/* ============================================
+   Form card
+   ============================================ */
+.card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 40px;
+}
+
+.field {
+  margin-bottom: 28px;
+}
+
+.field:last-of-type {
+  margin-bottom: 32px;
+}
+
+label, .field-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--garden);
+  margin-bottom: 10px;
+}
+
+input[type="number"],
+select {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 16px;
+  padding: 12px 4px;
+  border: none;
+  border-bottom: 1.5px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  border-radius: 0;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231F3329' stroke-width='1.5' fill='none' fill-rule='evenodd'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
+  padding-right: 20px;
+}
+
+input[type="number"]:focus,
+select:focus {
+  outline: none;
+  border-bottom-color: var(--garden);
+}
+
+.hint {
+  display: block;
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 8px;
+}
+
+/* checkboxes as pills */
+.check-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.check-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 0;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.check-pill:has(input:checked) {
+  border-color: var(--garden);
+  background: var(--garden-soft);
+}
+
+.check-pill input {
+  accent-color: var(--garden);
+  margin: 0;
+}
+
+/* radio list */
+.radio-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.radio-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  margin: 0;
+}
+
+.radio-row input {
+  accent-color: var(--garden);
+}
+
+/* submit */
+.submit-btn {
+  width: 100%;
+  background: var(--garden);
+  color: var(--white);
+  border: none;
+  padding: 16px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.submit-btn:hover {
+  background: #16241D;
+}
+
+.erro {
+  color: #A1443B;
+  font-size: 13px;
+  margin: 16px 0 0;
+}
+
+/* ============================================
+   Ticket (result)
+   ============================================ */
+.ticket-slot {
+  position: sticky;
+  top: 40px;
+}
+
+.ticket-empty {
+  border: 1.5px dashed var(--line);
+  border-radius: 4px;
+  padding: 60px 24px;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.ticket {
+  background: var(--garden);
+  color: var(--paper);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 24px 48px -20px rgba(31, 51, 41, 0.45);
+}
+
+.ticket-top {
+  padding: 32px 32px 24px;
+  text-align: center;
+}
+
+.ticket-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brass-soft);
+  margin: 0 0 10px;
+  opacity: 0.85;
+}
+
+.ticket-total {
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--white);
+}
+
+.ticket-perf {
+  height: 0;
+  border-top: 1.5px dashed rgba(250, 248, 243, 0.35);
+  margin: 0 24px;
+  position: relative;
+}
+
+.ticket-body {
+  padding: 24px 32px;
+}
+
+.ticket-line {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 8px 0;
+  color: var(--paper);
+  opacity: 0.92;
+}
+
+.ticket-line--muted {
+  color: var(--brass-soft);
+  opacity: 0.8;
+}
+
+.ticket-footer {
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brass-soft);
+  padding: 18px 24px 28px;
+  margin: 0;
+  opacity: 0.75;
+}

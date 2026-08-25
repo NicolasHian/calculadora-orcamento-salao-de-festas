@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espaço Bem Me Quer — Calculadora de Orçamento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<main class="page">
+
+  <header class="hero">
+    <p class="eyebrow">Espaço Bem Me Quer &middot; Brasília</p>
+    <h1>Calculadora de<br>Orçamento</h1>
+    <p class="hero-sub">Garden &amp; Villa — preencha os dados do seu evento e receba o valor na hora.</p>
+  </header>
+
+  <div class="layout">
+
+    <form class="card form-card" method="POST" action="{{ url_for('calcular') }}">
+
+      <div class="field">
+        <label for="convidados">Número de convidados</label>
+        <input type="number" id="convidados" name="convidados" min="1" max="500"
+               placeholder="Ex: 130" required
+               value="{{ form_data.convidados if form_data else '' }}">
+        <span class="hint">Faixas: até 100, 120, 150, 180 ou 200 convidados</span>
+      </div>
+
+      <div class="field">
+        <label for="dia">Dia do evento</label>
+        <select id="dia" name="dia" required>
+          <option value="" disabled {{ 'selected' if not form_data }}>Selecione o dia</option>
+          <option value="semana" {{ 'selected' if form_data and form_data.dia == 'semana' }}>Segunda a Quinta</option>
+          <option value="fds" {{ 'selected' if form_data and form_data.dia == 'fds' }}>Sexta, Sábado, Domingo ou Feriado</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Espaço desejado</span>
+        <div class="check-row">
+          <label class="check-pill">
+            <input type="checkbox" name="espacos" value="garden"
+                   {{ 'checked' if form_data and 'garden' in form_data.espacos }}>
+            <span>Garden</span>
+          </label>
+          <label class="check-pill">
+            <input type="checkbox" name="espacos" value="villa"
+                   {{ 'checked' if form_data and 'villa' in form_data.espacos }}>
+            <span>Villa</span>
+          </label>
+        </div>
+        <span class="hint">Selecione um ou os dois espaços</span>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Serviços adicionais</span>
+        <div class="check-row">
+          <label class="check-pill">
+            <input type="checkbox" name="extras" value="acai"
+                   {{ 'checked' if form_data and 'acai' in form_data.extras }}>
+            <span>Carrinho de Açaí</span>
+          </label>
+          <label class="check-pill">
+            <input type="checkbox" name="extras" value="buffet"
+                   {{ 'checked' if form_data and 'buffet' in form_data.extras }}>
+            <span>Buffet</span>
+          </label>
+          <label class="check-pill">
+            <input type="checkbox" name="extras" value="dj"
+                   {{ 'checked' if form_data and 'dj' in form_data.extras }}>
+            <span>DJ</span>
+          </label>
+          <label class="check-pill">
+            <input type="checkbox" name="extras" value="cabine"
+                   {{ 'checked' if form_data and 'cabine' in form_data.extras }}>
+            <span>Cabine Fotográfica</span>
+          </label>
+        </div>
+        <span class="hint">Açaí e Buffet são cobrados por pessoa &middot; DJ e Cabine têm valor fixo</span>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Alojamento</span>
+        <div class="radio-list">
+          <label class="radio-row">
+            <input type="radio" name="alojamento" value="nenhum"
+                   {{ 'checked' if not form_data or form_data.alojamento == 'nenhum' }}>
+            <span>Sem alojamento</span>
+          </label>
+          <label class="radio-row">
+            <input type="radio" name="alojamento" value="conjunto"
+                   {{ 'checked' if form_data and form_data.alojamento == 'conjunto' }}>
+            <span>Conjunto — 30 camas</span>
+          </label>
+          <label class="radio-row">
+            <input type="radio" name="alojamento" value="individual"
+                   {{ 'checked' if form_data and form_data.alojamento == 'individual' }}>
+            <span>Individual — até 4 pessoas</span>
+          </label>
+          <label class="radio-row">
+            <input type="radio" name="alojamento" value="ambos"
+                   {{ 'checked' if form_data and form_data.alojamento == 'ambos' }}>
+            <span>Conjunto + Individual</span>
+          </label>
+        </div>
+        <span class="hint">Desconto de 10% ao combinar com locação do espaço</span>
+      </div>
+
+      <button type="submit" class="submit-btn">Calcular orçamento</button>
+
+      {% if erro %}
+        <p class="erro">{{ erro }}</p>
+      {% endif %}
+
+    </form>
+
+    <div class="ticket-slot">
+      {% if resultado %}
+      <div class="ticket">
+        <div class="ticket-top">
+          <p class="ticket-eyebrow">Orçamento estimado</p>
+          <p class="ticket-total">R$ {{ resultado.total|moeda }}</p>
+        </div>
+
+        <div class="ticket-perf"></div>
+
+        <div class="ticket-body">
+          <div class="ticket-line">
+            <span>Convidados</span>
+            <span>até {{ resultado.convidados_tier }}</span>
+          </div>
+          <div class="ticket-line">
+            <span>Dia</span>
+            <span>{{ 'Fim de semana / feriado' if resultado.tipo_dia == 'fds' else 'Segunda a Quinta' }}</span>
+          </div>
+
+          {% for nome, valor in resultado.espacos_detalhe.items() %}
+          <div class="ticket-line">
+            <span>{{ nome|capitalize }}</span>
+            <span>R$ {{ valor|moeda }}</span>
+          </div>
+          {% endfor %}
+
+          {% if resultado.extras_detalhe %}
+          {% for nome, valor in resultado.extras_detalhe.items() %}
+          <div class="ticket-line">
+            <span>{{ nome }}</span>
+            <span>R$ {{ valor|moeda }}</span>
+          </div>
+          {% endfor %}
+          {% endif %}
+
+          {% if resultado.total_alojamento > 0 %}
+          <div class="ticket-line">
+            <span>Alojamento</span>
+            <span>R$ {{ resultado.total_alojamento|moeda }}</span>
+          </div>
+          {% if resultado.desconto_aplicado %}
+          <div class="ticket-line ticket-line--muted">
+            <span>Desconto combo</span>
+            <span>-10%</span>
+          </div>
+          {% endif %}
+          {% endif %}
+        </div>
+
+        <div class="ticket-perf"></div>
+
+        <p class="ticket-footer">Espaço Bem Me Quer — Garden &amp; Villa</p>
+      </div>
+      {% else %}
+      <div class="ticket-empty">
+        <p>Seu orçamento vai aparecer aqui.</p>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+</main>
+
+</body>
+</html>

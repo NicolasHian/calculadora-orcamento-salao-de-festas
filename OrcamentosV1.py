@@ -7,6 +7,16 @@ V1 - Terminal
 # TABELAS DE PREÇO 
 # ---------------------------------------------------
 
+PRECO_BUFFET_POR_PESSOA = 90.00
+PRECO_DJ = 2400.00
+PRECO_CABINE_FOTOGRAFICA = 1200.00
+
+PRECO_ACAI = {
+    (60, 100): 20.00,
+    (101, 150): 17.00,
+    (151, 200): 15.00,
+}
+
 
 PRECOS_ESPACO = {
     "garden": {
@@ -42,13 +52,53 @@ def pegar_convidados():
     numero_de_convidados = int(input("Numeros de convidados (Limitado a 200)"))
     degraus = [100, 120, 150, 180, 200] 
     for degrau in degraus:
-        if numero_de_convidados  <= degrau:
-            return degrau
+        if numero_de_convidados <= degrau:
+            return numero_de_convidados, degrau
           
     print("O Limite e 200")  
-    return 200      
-   
+    return numero_de_convidados, 200    
 
+def pegar_buffet():
+    resposta = input("Quer incluir buffet? (s/n): ")
+    if resposta.lower() == "s":
+        return True
+    else:
+        return False
+
+def calcular_preco_buffet(numero_convidados):
+    return PRECO_BUFFET_POR_PESSOA * numero_convidados
+
+def pegar_dj():
+    resposta = input("Quer incluir DJ? (s/n): ")
+    if resposta.lower() == "s":
+        return True
+    else:
+        return False
+
+
+def pegar_cabine_fotografica():
+    reposta = input("Quer incluir cabine?:")
+    if reposta.lower() == "s":
+        return True
+    else:
+        return False
+
+
+
+
+def pegar_acai():
+    resposta = input("Quer incluir açaí? (s/n): ")
+    if resposta.lower() == "s":
+        return True
+    else:
+        return False
+   
+def calcular_preco_acai(numero_convidados):
+    for faixa, preco_pessoa in PRECO_ACAI.items():
+        inicio = faixa[0]
+        fim = faixa[1]
+        if numero_convidados >= inicio and numero_convidados <= fim:
+            return preco_pessoa * numero_convidados
 
 def pegar_tipo_dia():
     Dias = {
@@ -130,7 +180,7 @@ def calcular_preco_alojamento(alojamentos_escolhidos, houve_locacao_espaco):
 
 def exibir_orcamento(espacos_escolhidos, convidados_tier, tipo_dia,
                       alojamentos_escolhidos, total_espacos,
-                      total_alojamento):
+                      total_alojamento, total_acai,total_buffet, total_dj, total_cabine):
     print("==== ORÇAMENTO =====")
     print("Quantidade de convidados:",convidados_tier)
     print("Dias", tipo_dia)
@@ -138,7 +188,7 @@ def exibir_orcamento(espacos_escolhidos, convidados_tier, tipo_dia,
     print("total dos espaços", total_espacos)
     print("alojamentos escolhidos", alojamentos_escolhidos)
     print("total dos alojamentos",total_alojamento)
-    total = total_alojamento + total_espacos
+    total = total_alojamento + total_espacos + total_acai + total_buffet + total_dj + total_cabine
     print("valor total=",total)
     #===== ORÇAMENTO =====
     #Convidados: até 150
@@ -161,15 +211,38 @@ def exibir_orcamento(espacos_escolhidos, convidados_tier, tipo_dia,
 def main():
     print("=== Calculadora de Orçamento - Garden e Villa ===\n")
 
-    convidados_tier = pegar_convidados()
+    Convidados_exato , convidados_tier = pegar_convidados()
     tipo_dia = pegar_tipo_dia()
     espacos_escolhidos = pegar_espacos()
     alojamentos_escolhidos = pegar_alojamentos()
 
+    
+
     total_espacos = calcular_preco_espacos(
         espacos_escolhidos, convidados_tier, tipo_dia
     )
+    quer_acai = pegar_acai()
+    if quer_acai:
+        total_acai= calcular_preco_acai(Convidados_exato)
+    else:
+        total_acai = 0
 
+    quer_buffet = pegar_buffet()
+    if quer_buffet:
+        total_buffet = calcular_preco_buffet(Convidados_exato)
+    else:
+        total_buffet = 0
+    quer_dj = pegar_dj()
+    if quer_dj:
+        total_dj = PRECO_DJ
+    else:
+        total_dj = 0
+
+    quer_cabine = pegar_cabine_fotografica()
+    if quer_cabine:
+        total_cabine = PRECO_CABINE_FOTOGRAFICA
+    else:
+        total_cabine = 0 
     # houve locação de espaço = a lista de espaços não está vazia
     houve_locacao_espaco = len(espacos_escolhidos) > 0
 
@@ -179,7 +252,7 @@ def main():
 
     exibir_orcamento(
         espacos_escolhidos, convidados_tier, tipo_dia,
-        alojamentos_escolhidos, total_espacos, total_alojamento
+        alojamentos_escolhidos, total_espacos, total_alojamento,total_acai,total_buffet,total_dj,total_cabine
     )
 
 
